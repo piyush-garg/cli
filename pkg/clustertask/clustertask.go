@@ -50,7 +50,7 @@ func List(c *cli.Clients, opts metav1.ListOptions) (*v1beta1.ClusterTaskList, er
 
 // It will fetch the resource based on the api available and return v1beta1 form
 func Get(c *cli.Clients, clustertaskname string, opts metav1.GetOptions) (*v1beta1.ClusterTask, error) {
-	gvr, err := actions.GetGroupVersionResource(clustertaskGroupResource, c.Tekton.Discovery())
+	gvr, err := actions.GetGroupVersionResource(clustertaskGroupResource)
 	if err != nil {
 		return nil, err
 	}

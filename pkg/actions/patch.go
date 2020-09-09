@@ -23,7 +23,7 @@ import (
 )
 
 func Patch(gr schema.GroupVersionResource, clients *cli.Clients, objName string, data []byte, opt metav1.PatchOptions, ns string) (*unstructured.Unstructured, error) {
-	gvr, err := GetGroupVersionResource(gr, clients.Tekton.Discovery())
+	gvr, err := GetGroupVersionResource(gr)
 	if err != nil {
 		return nil, err
 	}

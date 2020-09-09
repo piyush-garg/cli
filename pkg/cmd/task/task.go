@@ -16,6 +16,7 @@ package task
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/tektoncd/cli/pkg/actions"
 	"github.com/tektoncd/cli/pkg/cli"
 	"github.com/tektoncd/cli/pkg/flags"
 )
@@ -29,6 +30,14 @@ func Command(p cli.Params) *cobra.Command {
 			"commandType": "main",
 		},
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			c, err := p.Clients()
+			if err != nil {
+				return err
+			}
+			err = actions.GetAPIGroupResource(c.Tekton.Discovery())
+			if err != nil {
+				return err
+			}
 			return flags.InitParams(p, cmd)
 		},
 	}

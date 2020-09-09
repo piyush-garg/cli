@@ -63,7 +63,6 @@ func (t *Tracker) Monitor(allowed []string) <-chan []trh.Run {
 
 	gvr, _ := actions.GetGroupVersionResource(
 		schema.GroupVersionResource{Group: "tekton.dev", Resource: "pipelineruns"},
-		t.Tekton.Discovery(),
 	)
 
 	genericInformer, _ := factory.ForResource(*gvr)

@@ -40,7 +40,7 @@ func PrintObjects(groupResource schema.GroupVersionResource, w io.Writer, p cli.
 }
 
 func List(gr schema.GroupVersionResource, clients *cli.Clients, ns string, op metav1.ListOptions) (*unstructured.UnstructuredList, error) {
-	gvr, err := GetGroupVersionResource(gr, clients.Tekton.Discovery())
+	gvr, err := GetGroupVersionResource(gr)
 	if err != nil {
 		return nil, err
 	}

@@ -85,7 +85,7 @@ func List(c *cli.Clients, opts metav1.ListOptions, ns string) (*v1beta1.Pipeline
 
 // It will fetch the resource based on the api available and return v1beta1 form
 func Get(c *cli.Clients, prname string, opts metav1.GetOptions, ns string) (*v1beta1.PipelineRun, error) {
-	gvr, err := actions.GetGroupVersionResource(prGroupResource, c.Tekton.Discovery())
+	gvr, err := actions.GetGroupVersionResource(prGroupResource)
 	if err != nil {
 		return nil, err
 	}
@@ -173,7 +173,7 @@ func Patch(c *cli.Clients, prname string, opts metav1.PatchOptions, ns string) (
 
 // It will create the resource based on the api available.
 func Create(c *cli.Clients, pr *v1beta1.PipelineRun, opts metav1.CreateOptions, ns string) (*v1beta1.PipelineRun, error) {
-	gvr, err := actions.GetGroupVersionResource(prGroupResource, c.Tekton.Discovery())
+	gvr, err := actions.GetGroupVersionResource(prGroupResource)
 	if err != nil {
 		return nil, err
 	}

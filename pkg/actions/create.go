@@ -22,7 +22,7 @@ import (
 )
 
 func Create(gr schema.GroupVersionResource, clients *cli.Clients, object *unstructured.Unstructured, ns string, op metav1.CreateOptions) (*unstructured.Unstructured, error) {
-	gvr, err := GetGroupVersionResource(gr, clients.Tekton.Discovery())
+	gvr, err := GetGroupVersionResource(gr)
 	if err != nil {
 		return nil, err
 	}

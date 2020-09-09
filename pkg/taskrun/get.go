@@ -28,7 +28,7 @@ import (
 
 // It will fetch the resource based on the api available and return v1beta1 form
 func Get(c *cli.Clients, trname string, opts metav1.GetOptions, ns string) (*v1beta1.TaskRun, error) {
-	gvr, err := actions.GetGroupVersionResource(trGroupResource, c.Tekton.Discovery())
+	gvr, err := actions.GetGroupVersionResource(trGroupResource)
 	if err != nil {
 		return nil, err
 	}

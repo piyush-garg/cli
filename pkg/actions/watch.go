@@ -22,7 +22,7 @@ import (
 )
 
 func Watch(gr schema.GroupVersionResource, clients *cli.Clients, ns string, op metav1.ListOptions) (watch.Interface, error) {
-	gvr, err := GetGroupVersionResource(gr, clients.Tekton.Discovery())
+	gvr, err := GetGroupVersionResource(gr)
 	if err != nil {
 		return nil, err
 	}

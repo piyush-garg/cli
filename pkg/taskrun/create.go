@@ -26,7 +26,7 @@ import (
 )
 
 func Create(c *cli.Clients, tr *v1beta1.TaskRun, opts metav1.CreateOptions, ns string) (*v1beta1.TaskRun, error) {
-	trGVR, err := actions.GetGroupVersionResource(trGroupResource, c.Tekton.Discovery())
+	trGVR, err := actions.GetGroupVersionResource(trGroupResource)
 	if err != nil {
 		return nil, err
 	}

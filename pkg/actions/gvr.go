@@ -20,12 +20,9 @@ import (
 	"k8s.io/client-go/restmapper"
 )
 
-func GetGroupVersionResource(gr schema.GroupVersionResource, discovery discovery.DiscoveryInterface) (*schema.GroupVersionResource, error) {
-	apiGroupRes, err := restmapper.GetAPIGroupResources(discovery)
-	if err != nil {
-		return nil, err
-	}
+var apiGroupRes []*restmapper.APIGroupResources
 
+func GetGroupVersionResource(gr schema.GroupVersionResource) (*schema.GroupVersionResource, error) {
 	rm := restmapper.NewDiscoveryRESTMapper(apiGroupRes)
 	gvr, err := rm.ResourceFor(gr)
 	if err != nil {
@@ -33,4 +30,13 @@ func GetGroupVersionResource(gr schema.GroupVersionResource, discovery discovery
 	}
 
 	return &gvr, nil
+}
+
+func GetAPIGroupResource(discovery discovery.DiscoveryInterface) error {
+	var err error
+	apiGroupRes, err = restmapper.GetAPIGroupResources(discovery)
+	if err != nil {
+		return err
+	}
+	return nil
 }

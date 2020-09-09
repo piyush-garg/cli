@@ -68,7 +68,7 @@ func List(c *cli.Clients, opts metav1.ListOptions, ns string) (*v1beta1.Pipeline
 
 // It will fetch the resource based on the api available and return v1beta1 form
 func Get(c *cli.Clients, pipelinename string, opts metav1.GetOptions, ns string) (*v1beta1.Pipeline, error) {
-	gvr, err := actions.GetGroupVersionResource(pipelineGroupResource, c.Tekton.Discovery())
+	gvr, err := actions.GetGroupVersionResource(pipelineGroupResource)
 	if err != nil {
 		return nil, err
 	}
