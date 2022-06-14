@@ -24,7 +24,6 @@ import (
 	"github.com/tektoncd/cli/test/cli"
 	"github.com/tektoncd/cli/test/framework"
 	"gotest.tools/v3/assert"
-	"gotest.tools/v3/env"
 	"gotest.tools/v3/icmd"
 	knativetest "knative.dev/pkg/test"
 )
@@ -39,7 +38,7 @@ func TestTknPlugin(t *testing.T) {
 	assert.NilError(t, err)
 	currentpath, err := os.Getwd()
 	assert.NilError(t, err)
-	defer env.Patch(t, "TKN_PLUGINS_DIR", currentpath)()
+	t.Setenv("TKN_PLUGINS_DIR", currentpath)
 	t.Run("Success", func(t *testing.T) {
 		tkn.MustSucceed(t, "success")
 		tkn.MustSucceed(t, "success", "with", "args")
