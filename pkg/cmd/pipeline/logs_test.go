@@ -41,7 +41,6 @@ import (
 	"k8s.io/client-go/dynamic"
 	"knative.dev/pkg/apis"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
-
 	//"github.com/tektoncd/cli/pkg/cmd/pipelinerun"
 )
 
@@ -66,9 +65,9 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 
 	clock := test.FakeClock()
 	var (
-		pipelineName = "output-pipeline"
+		//pipelineName = "output-pipeline"
 		//prName       = "output-pipeline-1"    //output-pipeline-1
-		prstart      = test.FakeClock()
+		prstart = test.FakeClock()
 		//ns           = "namespace"
 
 		task1Name    = "output-task"
@@ -87,14 +86,6 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 
 		nopStep = "nop"
 	)
-
-	/*nsList := []*corev1.Namespace{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: ns,
-			},
-		},
-	}*/
 
 	trs := []*v1beta1.TaskRun{
 		{
@@ -283,7 +274,7 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 				},
 			},
 			Status: corev1.PodStatus{
-				Phase: corev1.PodPhase(corev1.PodSucceeded),
+				Phase: corev1.PodSucceeded,
 				InitContainerStatuses: []corev1.ContainerStatus{
 					{
 						Name:  tr1InitStep1,
@@ -300,7 +291,7 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      tr2Pod,
 				Namespace: ns,
-				Labels:    map[string]string{"tekton.dev/task":task2Name},
+				Labels:    map[string]string{"tekton.dev/task": task2Name},
 			},
 			Spec: corev1.PodSpec{
 				Containers: []corev1.Container{
@@ -329,10 +320,7 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 			fake.Step(nopStep, "Build successful"),
 		),
 	)
-*/
-	
-
-
+	*/
 
 	//clock := test.FakeClock()
 	pdata := []*v1beta1.Pipeline{
@@ -348,12 +336,12 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 		Namespaces: []*corev1.Namespace{
 			{
 				ObjectMeta: metav1.ObjectMeta{
-					Name: "ns",                                ////"ns"
+					Name: "ns",
 				},
 			},
 		},
 	})
-	
+
 	cs.Pipeline.Resources = cb.APIResourceList(versionv1beta1, []string{"pipeline", "pipelinerun"})
 	tdc := testDynamic.Options{}
 	dc, err := tdc.Client(
@@ -375,7 +363,7 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 	cs2.Pipeline.Resources = cb.APIResourceList(versionv1beta1, []string{"pipeline", "pipelinerun"})
 	tdc2 := testDynamic.Options{}
 	dc2, err := tdc2.Client(
-		cb.UnstructuredV1beta1P(pps[0], versionv1beta1),
+		cb.UnstructuredV1beta1P(pdata[0], versionv1beta1),
 	)
 	if err != nil {
 		t.Errorf("unable to create dynamic client: %v", err)
@@ -473,39 +461,35 @@ func TestPipelineLog_v1beta1(t *testing.T) {
 		t.Errorf("unable to create dynamic client: %v", err)
 	}
 
-
-// Seed test data
-cs4, _ := test.SeedV1beta1TestData(t, test.Data{
-	Pipelines:    pps,
-	PipelineRuns: prs,
-	TaskRuns:     trs,
-	Pods:         p,
-	Namespaces: []*corev1.Namespace{
-		{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: ns,
+	// Seed test data
+	cs4, _ := test.SeedV1beta1TestData(t, test.Data{
+		Pipelines:    pps,
+		PipelineRuns: prs,
+		TaskRuns:     trs,
+		Pods:         p,
+		Namespaces: []*corev1.Namespace{
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: ns,
+				},
 			},
 		},
-	},
-})
+	})
 
-// Define resources for the dynamic client
-cs4.Pipeline.Resources = cb.APIResourceList(versionv1beta1, []string{"pipeline", "pipelinerun", "task", "taskrun", "pod"})
+	// Define resources for the dynamic client
+	cs4.Pipeline.Resources = cb.APIResourceList(versionv1beta1, []string{"pipeline", "pipelinerun", "task", "taskrun"})
 
-// Create dynamic client
-tdc4 := testDynamic.Options{}
-dc4, err := tdc4.Client(
-	cb.UnstructuredV1beta1P(pps[0], versionv1beta1),
-	cb.UnstructuredV1beta1PR(prs[0], versionv1beta1),
-	cb.UnstructuredV1beta1TR(trs[0], versionv1beta1),
-	cb.UnstructuredV1beta1TR(trs[1], versionv1beta1),
-)
-if err != nil {
-	t.Errorf("unable to create dynamic client: %v", err)
-}
-
-
-
+	// Create dynamic client
+	tdc4 := testDynamic.Options{}
+	dc4, err := tdc4.Client(
+		cb.UnstructuredV1beta1P(pps[0], versionv1beta1),
+		cb.UnstructuredV1beta1PR(prs[0], versionv1beta1),
+		cb.UnstructuredV1beta1TR(trs[0], versionv1beta1),
+		cb.UnstructuredV1beta1TR(trs[1], versionv1beta1),
+	)
+	if err != nil {
+		t.Errorf("unable to create dynamic client: %v", err)
+	}
 
 	testParams := []struct {
 		name      string
@@ -515,7 +499,7 @@ if err != nil {
 		input     test.Clients
 		wantError bool
 		prefixing bool
-		want      string              ////
+		want      string ////
 	}{
 		{
 			name:      "Invalid namespace",
@@ -549,8 +533,8 @@ if err != nil {
 		},
 		{
 			name:      "Pipeline does not exist",
-			command:   []string{"logs", "pipeline", "-n", ns},     
-			namespace: "",          
+			command:   []string{"logs", "pipeline", "-n", ns},
+			namespace: "",
 			dynamic:   dc2,
 			input:     cs2,
 			wantError: true,
@@ -589,26 +573,23 @@ if err != nil {
 		},
 		{
 			name:      "Prefixing enabled for Pipelines",
-			command:   []string{"logs", prName, "--prefix=true", "-n", ns},
+			command:   []string{"logs", pipelineName, "--prefix=true", "-n", ns},
 			namespace: "",
 			dynamic:   dc4,
 			input:     cs4,
 			wantError: false,
 			prefixing: true,
-			want:  "[output-task : writefile-step] written a file\n\nBuild Successful\n\n[read-task : readfile-step] able to read a file\n\nBuild Successful\n\n",
-
-
+			want:      "[output-task : writefile-step] written a file\n\nBuild Successful\n\n[read-task : readfile-step] able to read a file\n\nBuild Successful\n\n",
 		},
 		{
 			name:      "Prefixing disabled for Pipelines",
-			command:   []string{"logs", prName, "--prefix=false", "-n", ns},
-			namespace: "",	
+			command:   []string{"logs", pipelineName, "--prefix=false", "-n", ns},
+			namespace: "",
 			dynamic:   dc4,
 			input:     cs4,
 			wantError: false,
 			prefixing: false,
-			want: "written a file\n\nBuild Successful\n\nable to read a file \n\nBuild Successful\n\n",
-
+			want:      "written a file\n\nBuild Successful\n\nable to read a file \n\nBuild Successful\n\n",
 		},
 	}
 
@@ -620,11 +601,10 @@ if err != nil {
 				p.SetNamespace(tp.namespace)
 			}
 			c := Command(p)
-			
+
 			//prlo := logOptsv1beta1(prName, tp.namespace, cs, dc, fake.Streamer(fakeLogs), false, tp.prefixing)           /// ns
 			//output, _ := fetchLogs(prlo)
 
-			
 			out, err := test.ExecuteCommand(c, tp.command...)
 
 			if tp.wantError {
@@ -648,8 +628,8 @@ func TestPipelineLog(t *testing.T) {
 	var (
 		pipelineName = "output-pipeline"
 		//prrName       = "output-pipeline-1"
-		prstart      = test.FakeClock()
-		ns           = "namespace"
+		prstart = test.FakeClock()
+		ns      = "namespace"
 
 		task1Name    = "output-task"
 		tr1Name      = "output-task-1"
@@ -910,8 +890,6 @@ func TestPipelineLog(t *testing.T) {
 		),
 	)*/
 
-
-
 	pdata := []*v1.Pipeline{
 		{
 			ObjectMeta: metav1.ObjectMeta{
@@ -1049,39 +1027,36 @@ func TestPipelineLog(t *testing.T) {
 		t.Errorf("unable to create dynamic client: %v", err)
 	}
 
-
-		// Seed test data
-		cs4, _ := test.SeedTestData(t, pipelinetest.Data{
-			Pipelines:    pp,
-			PipelineRuns: pr,
-			TaskRuns:     tr,
-			Pods:         p,
-			Namespaces: []*corev1.Namespace{
-				{
-					ObjectMeta: metav1.ObjectMeta{
-						Name: ns,
-					},
+	// Seed test data
+	cs4, _ := test.SeedTestData(t, pipelinetest.Data{
+		Pipelines:    pp,
+		PipelineRuns: pr,
+		TaskRuns:     tr,
+		Pods:         p,
+		Namespaces: []*corev1.Namespace{
+			{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: ns,
 				},
 			},
-		})
-	
-		// Define resources for the dynamic client
-		cs4.Pipeline.Resources = cb.APIResourceList(version, []string{"pipeline", "pipelinerun", "task", "taskrun", "pod"})
-	
-		// Create dynamic client
-		tdc4 := testDynamic.Options{}
-		dc4, err := tdc4.Client(
-			cb.UnstructuredP(pp[0],version),
-			cb.UnstructuredPR(pr[0], version),
-			cb.UnstructuredTR(tr[0], version),
-			cb.UnstructuredTR(tr[1], version),
-		)
-		if err != nil {
-			t.Errorf("unable to create dynamic client: %v", err)
-		}
-	
-	
-		
+		},
+	})
+
+	// Define resources for the dynamic client
+	cs4.Pipeline.Resources = cb.APIResourceList(version, []string{"pipeline", "pipelinerun", "task", "taskrun", "pod"})
+
+	// Create dynamic client
+	tdc4 := testDynamic.Options{}
+	dc4, err := tdc4.Client(
+		cb.UnstructuredP(pp[0], version),
+		cb.UnstructuredPR(pr[0], version),
+		cb.UnstructuredTR(tr[0], version),
+		cb.UnstructuredTR(tr[1], version),
+	)
+	if err != nil {
+		t.Errorf("unable to create dynamic client: %v", err)
+	}
+
 	testParams := []struct {
 		name      string
 		command   []string
@@ -1180,7 +1155,7 @@ func TestPipelineLog(t *testing.T) {
 			input:     cs4,
 			wantError: false,
 			prefixing: false,
-			want:     "written a file\n\nBuild Successful\n\nable to read a file \n\nBuild Successful\n\n",
+			want:      "written a file\n\nBuild Successful\n\nable to read a file \n\nBuild Successful\n\n",
 		},
 	}
 
@@ -2109,16 +2084,6 @@ func TestLogs_Auto_Select_FirstPipeline(t *testing.T) {
 		t.Error("No auto selection of the first pipeline when we have only one")
 	}
 }
-
-
-
-
-
-
-
-
-
-
 
 /*func logOpts(name string, ns string, cs pipelinetest.Clients, dc dynamic.Interface, streamer stream.NewStreamerFunc, follow bool, prefixing bool) *options.LogOptions {
 	p := test.Params{
